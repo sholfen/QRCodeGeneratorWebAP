@@ -1,0 +1,30 @@
+﻿@page "/"
+@using QRCodeGeneratorWebAP.Data
+@inject WeatherForecastService ForecastService
+@inject QRCodeAppService qRCodeAppService
+
+<h3>QRCode</h3>
+
+<input type="text" @bind-value="input" /><br />
+<button class="btn btn-primary" @onclick="GenerateQRCode">Generate QRCode</button>
+<br />
+<span>@message</span>
+<br />
+<img src="@imageData" />
+<br />
+<span>@imageData</span>
+
+@code {
+    private int currentCount = 0;
+    private string imageData = string.Empty;
+    private string input = string.Empty;
+    private string message = string.Empty;
+
+    private async Task GenerateQRCode()
+    {
+        message = "處理中";
+        imageData = await qRCodeAppService.GetQRCodeImgString(input);
+        message = "完成";
+        input = string.Empty;
+    }
+}
