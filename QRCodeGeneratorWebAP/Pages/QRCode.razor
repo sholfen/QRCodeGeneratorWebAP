@@ -6,7 +6,7 @@
 <h3>QRCode</h3>
 
 <input type="text" @bind-value="input" /><br />
-<button class="btn btn-primary" @onclick="GenerateQRCode">Generate QRCode</button>
+<button class="btn btn-primary" @onclick="async (e) => await this.GenerateQRCode(e)">Generate QRCode</button>
 <br />
 <span>@message</span>
 <br />
@@ -20,7 +20,7 @@
     private string input = string.Empty;
     private string message = string.Empty;
 
-    private async Task GenerateQRCode()
+    private async Task GenerateQRCode(MouseEventArgs e)//https://www.codeproject.com/Articles/5276310/Async-Programming-in-Blazor
     {
         message = "處理中";
         imageData = await qRCodeAppService.GetQRCodeImgString(input);
