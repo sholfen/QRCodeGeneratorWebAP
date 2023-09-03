@@ -1,7 +1,9 @@
 ﻿@page "/"
+@using Blazored.LocalStorage;
 @using QRCodeGeneratorWebAP.Data
 @inject WeatherForecastService ForecastService
 @inject QRCodeAppService qRCodeAppService
+@inject ILocalStorageService localstorage
 
 <h3>QRCode</h3>
 
@@ -24,6 +26,14 @@
     {
         message = "處理中";
         imageData = await qRCodeAppService.GetQRCodeImgString(input);
+
+        List<QRCodeData> list = await localstorage.GetItemAsync<List<QRCodeData>>(QRCodeData.KEY);
+        if (list == null)
+        {
+            list = new List<QRCodeData>();
+        }
+        list.Add(new QRCodeData { URL = input, ImagStr = imageData });
+        await localstorage.SetItemAsync<List<QRCodeData>>(QRCodeData.KEY, list);
         message = "完成";
         input = string.Empty;
     }

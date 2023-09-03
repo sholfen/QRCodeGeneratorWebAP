@@ -1,0 +1,27 @@
+﻿@page "/GetList"
+@using Blazored.LocalStorage
+@using QRCodeGeneratorWebAP.Data
+@inject ILocalStorageService localstorage
+
+<h3>List QR Code</h3>
+
+@foreach (var item in list)
+{
+    <img src="@item.ImagStr" />
+    <br />
+    <span>@item.URL</span>
+    <br />
+}
+
+@code {
+    private List<QRCodeData> list = new List<QRCodeData>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        list = await localstorage.GetItemAsync<List<QRCodeData>>(QRCodeData.KEY);
+        if (list == null)
+        {
+            list = new List<QRCodeData>();
+        }
+    }
+}
