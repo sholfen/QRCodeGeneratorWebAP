@@ -7,8 +7,11 @@
 
 <h3>QRCode</h3>
 
+<Button Color="ButtonColor.Info" @onclick="Clear">Clear Cache</Button>
+<br />
 <input type="text" @bind-value="input" /><br />
-<button class="btn btn-primary" @onclick="async (e) => await this.GenerateQRCode(e)">Generate QRCode</button>
+@* <button class="btn btn-primary" @onclick="async (e) => await this.GenerateQRCode(e)">Generate QRCode</button> *@
+<Button Color="ButtonColor.Info" @onclick="GenerateQRCode">Generate QRCode</Button>
 <br />
 <span>@message</span>
 <br />
@@ -22,19 +25,37 @@
     private string input = string.Empty;
     private string message = string.Empty;
 
-    private async Task GenerateQRCode(MouseEventArgs e)//https://www.codeproject.com/Articles/5276310/Async-Programming-in-Blazor
+    //private async Task GenerateQRCode(MouseEventArgs e)
+    private async Task GenerateQRCode()
     {
         message = "處理中";
         imageData = await qRCodeAppService.GetQRCodeImgString(input);
-
-        List<QRCodeData> list = await localstorage.GetItemAsync<List<QRCodeData>>(QRCodeData.KEY);
-        if (list == null)
+        //await localstorage.ClearAsync();
+        try
         {
-            list = new List<QRCodeData>();
+            List<QRCodeData> list = await localstorage.GetItemAsync<List<QRCodeData>>(QRCodeData.KEY);
+            if (list == null)
+            {
+                list = new List<QRCodeData>();
+            }
+            list.Add(new QRCodeData { URL = input, ImagStr = imageData });
+            await localstorage.SetItemAsync<List<QRCodeData>>(QRCodeData.KEY, list);
+            message = "完成";
         }
-        list.Add(new QRCodeData { URL = input, ImagStr = imageData });
-        await localstorage.SetItemAsync<List<QRCodeData>>(QRCodeData.KEY, list);
-        message = "完成";
-        input = string.Empty;
+        catch(Exception ex)
+        {
+            message = ex.Message;
+        }
+        finally
+        {
+            input = string.Empty;
+        }
+        //Task.WaitAll();
+    }
+
+    private async Task Clear()
+    {
+        await localstorage.ClearAsync();
+        message = "資料已清除";
     }
 }
