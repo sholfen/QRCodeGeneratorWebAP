@@ -25,11 +25,20 @@
     private string input = string.Empty;
     private string message = string.Empty;
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(!firstRender)
+        {
+            message = "完成";
+        }
+    }
+
     //private async Task GenerateQRCode(MouseEventArgs e)
     private async Task GenerateQRCode()
     {
         message = "處理中";
-        imageData = await qRCodeAppService.GetQRCodeImgString(input);
+        //imageData = await qRCodeAppService.GetQRCodeImgString(input);
+        imageData = qRCodeAppService.GetQRCodeImgString2(input);
         //await localstorage.ClearAsync();
         try
         {
@@ -40,7 +49,7 @@
             }
             list.Add(new QRCodeData { URL = input, ImagStr = imageData });
             await localstorage.SetItemAsync<List<QRCodeData>>(QRCodeData.KEY, list);
-            message = "完成";
+            //message = "完成";
         }
         catch(Exception ex)
         {

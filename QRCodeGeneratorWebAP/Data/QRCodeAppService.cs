@@ -2,6 +2,7 @@
 using ZXing;
 using System.Drawing;
 using ZXing.Windows.Compatibility;
+using QRCoder;
 
 namespace QRCodeGeneratorWebAP.Data
 {
@@ -59,6 +60,16 @@ namespace QRCodeGeneratorWebAP.Data
             qrCodeBitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
             var array = stream.ToArray();
 
+            var b64String = Convert.ToBase64String(array);
+            string imageURL = "data:image/png;base64," + b64String;
+
+            return imageURL;
+        }
+
+        public string GetQRCodeImgString2(string input)
+        {
+            //https://blog.miniasp.com/post/2023/08/30/How-to-use-QRCoder-generates-QR-Code-using-dotNet
+            var array = PngByteQRCodeHelper.GetQRCode(input, QRCodeGenerator.ECCLevel.Q, 5);
             var b64String = Convert.ToBase64String(array);
             string imageURL = "data:image/png;base64," + b64String;
 
